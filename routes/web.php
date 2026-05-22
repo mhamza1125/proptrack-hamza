@@ -2,27 +2,38 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
-// ── Public Routes ────────────────────────────────────────────────────────────
+// ── Public Routes ─────────────────────────────────────────────────────────────
 Route::get('/', [PublicController::class, 'index'])->name('home');
 Route::get('/listings/{id}', [PublicController::class, 'show'])->name('listings.show');
 
-// ── Authenticated Routes ──────────────────────────────────────────────────────
+// Public inquiry submission (guests allowed)
+Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.store');
+
+// ── Authenticated Routes ───────────────────────────────────────────────────────
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Dashboard — redirect based on role
+    // Dashboard — redirect to property management
     Route::get('/dashboard', function () {
-        return auth()->user()->hasRole('admin')
-            ? redirect()->route('properties.index')
-            : redirect()->route('properties.index');
+        return redirect()->route('properties.index');
     })->name('dashboard');
 
-    // Property management (admin + agent, scoped by service)
+    // Property management (admin sees all; agent sees own — scoped in service)
     Route::resource('properties', PropertyController::class);
+
+    // Inquiry management
+    Route::get('/inquiries', [InquiryController::class, 'index'])->name('inquiries.index');
+    Route::get('/inquiries/{id}', [InquiryController::class, 'show'])->name('inquiries.show');
+
+    // Status update — admin only (enforced in FormRequest + middleware)
+    Route::patch('/inquiries/{inquiry}/status', [InquiryController::class, 'updateStatus'])
+        ->middleware('role:admin')
+        ->name('inquiries.update-status');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

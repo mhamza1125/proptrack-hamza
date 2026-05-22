@@ -8,7 +8,9 @@ use App\Models\Inquiry;
 use App\Models\Property;
 use App\Policies\InquiryPolicy;
 use App\Policies\PropertyPolicy;
+use App\Repositories\Interfaces\InquiryRepositoryInterface;
 use App\Repositories\Interfaces\PropertyRepositoryInterface;
+use App\Repositories\InquiryRepository;
 use App\Repositories\PropertyRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -20,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PropertyRepositoryInterface::class,
             PropertyRepository::class,
+        );
+
+        $this->app->bind(
+            InquiryRepositoryInterface::class,
+            InquiryRepository::class,
         );
     }
 
