@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
@@ -18,10 +19,8 @@ Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.
 // ── Authenticated Routes ───────────────────────────────────────────────────────
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Dashboard — redirect to property management
-    Route::get('/dashboard', function () {
-        return redirect()->route('properties.index');
-    })->name('dashboard');
+    // Dashboard — role-aware (admin stats vs agent panel)
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Property management (admin sees all; agent sees own — scoped in service)
     Route::resource('properties', PropertyController::class);

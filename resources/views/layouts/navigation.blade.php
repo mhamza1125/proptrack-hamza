@@ -16,15 +16,17 @@
 
                 {{-- Navigation Links --}}
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        Dashboard
+                    </x-nav-link>
+
                     <x-nav-link :href="route('properties.index')" :active="request()->routeIs('properties.*')">
                         {{ auth()->user()->hasRole('admin') ? 'All Properties' : 'My Properties' }}
                     </x-nav-link>
 
-                    @role('admin')
-                        <x-nav-link :href="route('inquiries.index')" :active="request()->routeIs('inquiries.*')">
-                            Inquiries
-                        </x-nav-link>
-                    @endrole
+                    <x-nav-link :href="route('inquiries.index')" :active="request()->routeIs('inquiries.*')">
+                        Inquiries
+                    </x-nav-link>
 
                     <x-nav-link :href="route('home')" :active="false">
                         Public Site
@@ -85,15 +87,17 @@
     {{-- Responsive Navigation --}}
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                Dashboard
+            </x-responsive-nav-link>
+
             <x-responsive-nav-link :href="route('properties.index')" :active="request()->routeIs('properties.*')">
                 {{ auth()->user()->hasRole('admin') ? 'All Properties' : 'My Properties' }}
             </x-responsive-nav-link>
 
-            @role('admin')
-                <x-responsive-nav-link :href="route('inquiries.index')" :active="request()->routeIs('inquiries.*')">
-                    Inquiries
-                </x-responsive-nav-link>
-            @endrole
+            <x-responsive-nav-link :href="route('inquiries.index')" :active="request()->routeIs('inquiries.*')">
+                Inquiries
+            </x-responsive-nav-link>
 
             <x-responsive-nav-link :href="route('home')" :active="false">
                 Public Site
