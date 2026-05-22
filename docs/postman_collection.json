@@ -1,0 +1,403 @@
+{
+  "info": {
+    "_postman_id": "proptrack-api-collection",
+    "name": "PropTrack API",
+    "description": "Sanctum-authenticated REST API for PropTrack — Property Listings & Inquiry Management.\n\n## Setup\n1. Set `base_url` collection variable to `http://localhost:8000`.\n2. Run **Login** — the test script auto-populates the `token` variable.\n3. All authenticated requests use `{{token}}` via the Bearer Auth tab.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.status && json.data && json.data.token) {",
+                  "    pm.collectionVariables.set('token', json.data.token);",
+                  "    pm.test('Token stored', () => pm.expect(json.data.token).to.be.a('string'));",
+                  "}",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@proptrack.test\",\n  \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticate with email + password. On success the response body contains a Sanctum plain-text token. The **Tests** script automatically saves it to the `token` collection variable."
+          },
+          "response": [
+            {
+              "name": "200 — Login successful",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@proptrack.test\",\n  \"password\": \"password\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "login"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Login successful\",\n  \"data\": {\n    \"token\": \"1|plainTextToken...\",\n    \"token_type\": \"Bearer\",\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"Admin User\",\n      \"email\": \"admin@proptrack.test\",\n      \"roles\": [\"admin\"]\n    }\n  }\n}"
+            },
+            {
+              "name": "422 — Invalid credentials",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"wrong@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "login"]
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"The provided credentials are incorrect.\",\n  \"errors\": {\n    \"email\": [\"The provided credentials are incorrect.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('token', '');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Revokes the current access token. Requires a valid Bearer token. The Tests script clears the stored `token` variable."
+          },
+          "response": [
+            {
+              "name": "200 — Logged out",
+              "originalRequest": {
+                "method": "POST",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{base_url}}/api/auth/logout",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "logout"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Logged out successfully\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Listings",
+      "item": [
+        {
+          "name": "List active properties",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has pagination', () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data).to.have.property('items');",
+                  "    pm.expect(json.data).to.have.property('pagination');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/listings?per_page=6&city=&type=&min_price=&max_price=&search=",
+              "host": ["{{base_url}}"],
+              "path": ["api", "listings"],
+              "query": [
+                { "key": "per_page", "value": "6", "description": "Results per page (1–50, default 12)" },
+                { "key": "city", "value": "", "description": "Filter by city name (partial match)" },
+                { "key": "type", "value": "", "description": "house | apartment | townhouse | land | commercial" },
+                { "key": "min_price", "value": "", "description": "Minimum price (decimal)" },
+                { "key": "max_price", "value": "", "description": "Maximum price (decimal)" },
+                { "key": "search", "value": "", "description": "Full-text search on title, city, address" }
+              ]
+            },
+            "description": "Returns paginated active property listings. Public endpoint — no authentication required. Rate limit: 60 req/min per IP."
+          },
+          "response": [
+            {
+              "name": "200 — Paginated listings",
+              "originalRequest": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{base_url}}/api/listings?per_page=2",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "listings"],
+                  "query": [{ "key": "per_page", "value": "2" }]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Success\",\n  \"data\": {\n    \"items\": [\n      {\n        \"id\": 1,\n        \"title\": \"Spacious Family Home\",\n        \"type\": \"house\",\n        \"type_label\": \"House\",\n        \"status\": \"active\",\n        \"status_label\": \"Active\",\n        \"price\": 850000.00,\n        \"price_formatted\": \"$850,000.00\",\n        \"bedrooms\": 4,\n        \"bathrooms\": 2,\n        \"area\": 320.5,\n        \"city\": \"Sydney\",\n        \"address\": \"12 Harbour St, Sydney NSW 2000\",\n        \"images\": {\n          \"featured\": \"http://localhost:8000/storage/properties/thumbs/abc123.jpg\",\n          \"full\": \"http://localhost:8000/storage/properties/abc123.jpg\",\n          \"gallery\": []\n        },\n        \"agent\": { \"id\": 2, \"name\": \"Agent Alice\" },\n        \"created_at\": \"2026-05-22T04:48:22.000000Z\",\n        \"updated_at\": \"2026-05-22T04:48:22.000000Z\",\n        \"links\": {\n          \"self\": \"http://localhost:8000/api/listings/1\",\n          \"public\": \"http://localhost:8000/listings/1\"\n        }\n      }\n    ],\n    \"pagination\": {\n      \"total\": 20,\n      \"per_page\": 2,\n      \"current_page\": 1,\n      \"last_page\": 10,\n      \"from\": 1,\n      \"to\": 2\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get single listing",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 or 404', () => {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/listings/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "listings", "1"]
+            },
+            "description": "Returns a single active property by ID. Returns 404 if the listing does not exist or is not active. Public endpoint — no authentication required."
+          },
+          "response": [
+            {
+              "name": "200 — Property found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{base_url}}/api/listings/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "listings", "1"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Success\",\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"Spacious Family Home\",\n    \"description\": \"Beautiful 4-bedroom home...\",\n    \"type\": \"house\",\n    \"type_label\": \"House\",\n    \"status\": \"active\",\n    \"status_label\": \"Active\",\n    \"price\": 850000.00,\n    \"price_formatted\": \"$850,000.00\",\n    \"bedrooms\": 4,\n    \"bathrooms\": 2,\n    \"area\": 320.5,\n    \"city\": \"Sydney\",\n    \"address\": \"12 Harbour St, Sydney NSW 2000\",\n    \"images\": {\n      \"featured\": \"http://localhost:8000/storage/properties/thumbs/abc123.jpg\",\n      \"full\": \"http://localhost:8000/storage/properties/abc123.jpg\",\n      \"gallery\": []\n    },\n    \"agent\": { \"id\": 2, \"name\": \"Agent Alice\" },\n    \"created_at\": \"2026-05-22T04:48:22.000000Z\",\n    \"updated_at\": \"2026-05-22T04:48:22.000000Z\",\n    \"links\": {\n      \"self\": \"http://localhost:8000/api/listings/1\",\n      \"public\": \"http://localhost:8000/listings/1\"\n    }\n  }\n}"
+            },
+            {
+              "name": "404 — Not found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [{ "key": "Accept", "value": "application/json" }],
+                "url": {
+                  "raw": "{{base_url}}/api/listings/9999",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "listings", "9999"]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": false,\n  \"message\": \"Listing not found.\",\n  \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Inquiries",
+      "item": [
+        {
+          "name": "Submit inquiry",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Inquiry created', () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.status).to.be.true;",
+                  "    pm.expect(json.data.id).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"property_id\": 1,\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"phone\": \"+61 400 123 456\",\n  \"preferred_contact_method\": \"WhatsApp\",\n  \"message\": \"I am very interested in this property. Is it still available for inspection?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/inquiries",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inquiries"]
+            },
+            "description": "Submits an inquiry on a property listing. Requires a valid Sanctum Bearer token.\n\n`preferred_contact_method` accepts: `Phone`, `Email`, `WhatsApp` (nullable).\n\nOn success, queues a notification email to the listing agent. If the SMTP driver fails, the inquiry record is still saved and the job is moved to `failed_jobs`. Rate limit: 10 req/min per user."
+          },
+          "response": [
+            {
+              "name": "201 — Inquiry submitted",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"property_id\": 1,\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"phone\": \"+61 400 123 456\",\n  \"preferred_contact_method\": \"WhatsApp\",\n  \"message\": \"I am very interested in this property. Is it still available?\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/inquiries",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "inquiries"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": true,\n  \"message\": \"Inquiry submitted successfully.\",\n  \"data\": {\n    \"id\": 42,\n    \"name\": \"Jane Doe\",\n    \"email\": \"jane@example.com\",\n    \"phone\": \"+61 400 123 456\",\n    \"preferred_contact_method\": \"WhatsApp\",\n    \"message\": \"I am very interested in this property. Is it still available?\",\n    \"status\": \"new\",\n    \"status_label\": \"New\",\n    \"property\": { \"id\": 1, \"title\": \"Spacious Family Home\" },\n    \"created_at\": \"2026-05-22T10:00:00.000000Z\",\n    \"updated_at\": \"2026-05-22T10:00:00.000000Z\"\n  }\n}"
+            },
+            {
+              "name": "401 — Unauthenticated",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"property_id\": 1,\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"message\": \"Is this available?\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/inquiries",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "inquiries"]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Unauthenticated.\"\n}"
+            },
+            {
+              "name": "422 — Validation error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Accept", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"property_id\": 9999,\n  \"name\": \"\",\n  \"email\": \"not-an-email\",\n  \"preferred_contact_method\": \"Telegram\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/inquiries",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "inquiries"]
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"The property id field must exist.\",\n  \"errors\": {\n    \"property_id\": [\"The property id field must exist.\"],\n    \"name\": [\"The name field is required.\"],\n    \"email\": [\"The email field must be a valid email address.\"],\n    \"preferred_contact_method\": [\"The selected preferred contact method is invalid.\"]\n  }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

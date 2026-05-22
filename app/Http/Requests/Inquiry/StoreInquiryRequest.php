@@ -19,8 +19,9 @@ class StoreInquiryRequest extends FormRequest
             'property_id' => ['required', 'integer', 'exists:properties,id'],
             'name'        => ['required', 'string', 'max:100'],
             'email'       => ['required', 'email', 'max:150'],
-            'phone'       => ['nullable', 'string', 'max:30'],
-            'message'     => ['required', 'string', 'min:10', 'max:2000'],
+            'phone'                    => ['nullable', 'string', 'max:30'],
+            'preferred_contact_method' => ['nullable', 'in:Phone,Email,WhatsApp'],
+            'message'                  => ['required', 'string', 'min:10', 'max:2000'],
         ];
     }
 }

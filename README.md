@@ -202,38 +202,90 @@ curl -X POST http://localhost:8000/api/inquiries \
 
 ## ERD — Entity Relationship Diagram
 
+```mermaid
+erDiagram
+    users {
+        bigint id PK
+        string name
+        string email UK
+        timestamp email_verified_at
+        string password
+        string remember_token
+        timestamp created_at
+        timestamp updated_at
+    }
+    roles {
+        bigint id PK
+        string name
+        string guard_name
+        timestamp created_at
+        timestamp updated_at
+    }
+    model_has_roles {
+        bigint role_id FK
+        string model_type
+        bigint model_id
+    }
+    properties {
+        bigint id PK
+        bigint user_id FK
+        string title
+        text description
+        enum type
+        enum status
+        decimal price
+        smallint bedrooms
+        smallint bathrooms
+        decimal area
+        string city
+        string address
+        string featured_image
+        timestamp deleted_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    property_images {
+        bigint id PK
+        bigint property_id FK
+        string image_path
+        boolean is_primary
+        smallint sort_order
+        timestamp created_at
+        timestamp updated_at
+    }
+    inquiries {
+        bigint id PK
+        bigint property_id FK
+        string name
+        string email
+        string phone
+        enum preferred_contact_method
+        text message
+        enum status
+        timestamp created_at
+        timestamp updated_at
+    }
+    personal_access_tokens {
+        bigint id PK
+        string tokenable_type
+        bigint tokenable_id
+        string token UK
+        text abilities
+        timestamp last_used_at
+        timestamp expires_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    users ||--o{ properties : "lists"
+    users ||--o{ model_has_roles : "has"
+    roles ||--o{ model_has_roles : "assigned via"
+    properties ||--o{ property_images : "has"
+    properties ||--o{ inquiries : "receives"
+    users ||--o{ personal_access_tokens : "owns"
 ```
-users
-  id, name, email, password, email_verified_at, remember_token, timestamps
 
-model_has_roles  (Spatie pivot)
-  role_id, model_type, model_id
-
-roles  (Spatie)
-  id, name, guard_name, timestamps
-
-properties
-  id, user_id (FK→users), title, description, type (enum), status (enum),
-  price (decimal 15,2), bedrooms, bathrooms, area (decimal 10,2),
-  city (indexed), address, featured_image, deleted_at (soft-delete), timestamps
-  INDEX: city, status, user_id, price
-
-property_images
-  id, property_id (FK→properties CASCADE), image_path, is_primary,
-  sort_order, timestamps
-
-inquiries
-  id, property_id (FK→properties CASCADE), name, email, phone,
-  message (text), status (enum: new/in_review/contacted/closed),
-  timestamps
-  INDEX: property_id, status
-
-personal_access_tokens  (Sanctum)
-  id, tokenable_type, tokenable_id, name, token (hashed), abilities,
-  last_used_at, expires_at, timestamps
-
-jobs / failed_jobs  (Queue)
-```
+> Full ERD export: [`docs/erd.md`](docs/erd.md)
 
 **Relationships:**
 - `User` hasMany `Property` (one agent owns many listings)
@@ -369,12 +421,65 @@ php artisan queue:failed
 
 ## Commit History
 
-```
+```bash
+Initial commit: Setup fresh Laravel 12 project
+
 feat: setup laravel project with authentication, roles, and clean architecture structure
+- Installed Laravel Breeze (Blade + Tailwind)
+- Configured authentication scaffolding
+- Installed Spatie Permission, Sanctum, Debugbar, and Intervention Image
+- Added clean architecture folders (Services, Repositories, DTOs, Enums, etc.)
+- Configured queues, storage linking, and development mail setup
+
 feat: implement database schema with users, properties, images, inquiries, relationships, and authorization rules
+- Created normalized relational schema
+- Added properties, property_images, and inquiries tables
+- Implemented enums, foreign keys, indexes, and soft deletes
+- Added model relationships and authorization policies
+- Seeded admin and agent test accounts
+
 feat: implement property listings module with service-repository architecture, image handling, filters, and role-based access control
+- Built complete property CRUD system
+- Added image uploads with thumbnail generation
+- Implemented public listing pages and detail pages
+- Added search and filter functionality
+- Enforced role-based property management
+
 feat: implement inquiry management system with guest submissions, queued email notifications, and status workflow
+- Added guest inquiry submission flow
+- Implemented inquiry validation and persistence
+- Added queued email notifications using Laravel Queues
+- Implemented inquiry status workflow
+- Added role-scoped inquiry access control
+
 feat: implement admin and agent dashboards with analytics, role-scoped metrics, and secure deletion safeguards
-feat: implement REST API with Sanctum auth, API Resources, rate limiting, and JSON envelope
-feat: phase 7 — light theme overhaul, N+1 fixes, 3-column grid, aspect-ratio images, production docs
+- Built admin dashboard analytics
+- Added inquiry and listing metrics
+- Implemented top listing calculations
+- Added agent dashboard with scoped statistics
+- Implemented multi-layer deletion safeguards
+
+feat: implement Sanctum-based REST API with authentication, listings endpoints, inquiry submission, API resources, and rate limiting
+- Added Sanctum token authentication
+- Implemented REST API endpoints
+- Added API Resources and JSON envelope formatting
+- Added API rate limiting
+- Added authenticated inquiry API submission
+
+chore: code audit cleanup, UI theme refactor, documentation updates, and critical production fixes for authorization, image handling, and mailto encoding
+- Performed N+1 query optimization audit
+- Refactored dark UI into production-ready light theme
+- Improved image placeholders and grid layout
+- Fixed Laravel 12 authorization helper compatibility
+- Fixed Intervention Image Laravel integration
+- Improved mailto encoding and email UX
+- Added comprehensive README and deployment documentation
+
+feat: finalize production audit with agent registration, preferred contact method support, API docs, ERD documentation, and environment improvements
+- Added automatic agent role assignment on registration
+- Added preferred contact method support across full stack
+- Added Mermaid ERD documentation
+- Added Postman API collection
+- Improved environment configuration documentation
+- Finalized production-readiness audit
 ```

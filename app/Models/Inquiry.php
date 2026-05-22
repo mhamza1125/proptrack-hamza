@@ -18,6 +18,7 @@ class Inquiry extends Model
         'name',
         'email',
         'phone',
+        'preferred_contact_method',
         'message',
         'status',
     ];

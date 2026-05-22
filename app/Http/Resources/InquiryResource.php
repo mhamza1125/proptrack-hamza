@@ -16,8 +16,9 @@ class InquiryResource extends JsonResource
             'id'         => $this->id,
             'name'       => $this->name,
             'email'      => $this->email,
-            'phone'      => $this->phone,
-            'message'    => $this->message,
+            'phone'                    => $this->phone,
+            'preferred_contact_method' => $this->preferred_contact_method,
+            'message'                  => $this->message,
             'status'     => $this->status->value,
             'status_label' => $this->status->label(),
             'property'   => $this->whenLoaded('property', fn () => [

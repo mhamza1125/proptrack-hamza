@@ -157,6 +157,18 @@
                             </div>
 
                             <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">Preferred Contact Method</label>
+                                <select name="preferred_contact_method"
+                                        class="w-full rounded-lg border-slate-300 text-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                                    <option value="">— Select —</option>
+                                    <option value="Phone" @selected(old('preferred_contact_method') === 'Phone')>Phone</option>
+                                    <option value="Email" @selected(old('preferred_contact_method') === 'Email')>Email</option>
+                                    <option value="WhatsApp" @selected(old('preferred_contact_method') === 'WhatsApp')>WhatsApp</option>
+                                </select>
+                                @error('preferred_contact_method')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                            </div>
+
+                            <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-1.5">Message <span class="text-red-500">*</span></label>
                                 <textarea name="message" rows="4" required
                                           class="w-full rounded-lg border-slate-300 text-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white"

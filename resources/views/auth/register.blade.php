@@ -2,6 +2,11 @@
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
+        <div class="mb-6 text-center">
+            <h2 class="text-xl font-bold text-slate-800">Agent Registration</h2>
+            <p class="text-sm text-slate-500 mt-1">Create your PropTrack agent account</p>
+        </div>
+
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
