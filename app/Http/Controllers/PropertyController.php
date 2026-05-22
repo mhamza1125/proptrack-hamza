@@ -11,6 +11,7 @@ use App\Http\Requests\Property\UpdatePropertyRequest;
 use App\Models\Property;
 use App\Services\PropertyService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class PropertyController extends Controller
@@ -28,7 +29,7 @@ class PropertyController extends Controller
 
     public function create(): View
     {
-        $this->authorize('create', Property::class);
+        Gate::authorize('create', Property::class);
 
         $types    = PropertyType::cases();
         $statuses = PropertyStatus::cases();
@@ -51,7 +52,7 @@ class PropertyController extends Controller
 
     public function show(Property $property): View
     {
-        $this->authorize('view', $property);
+        Gate::authorize('view', $property);
 
         $property->load(['agent:id,name', 'images', 'inquiries']);
 
@@ -60,7 +61,7 @@ class PropertyController extends Controller
 
     public function edit(Property $property): View
     {
-        $this->authorize('update', $property);
+        Gate::authorize('update', $property);
 
         $types    = PropertyType::cases();
         $statuses = PropertyStatus::cases();
@@ -83,7 +84,7 @@ class PropertyController extends Controller
 
     public function destroy(Property $property): RedirectResponse
     {
-        $this->authorize('delete', $property);
+        Gate::authorize('delete', $property);
 
         if ($property->hasActiveInquiries()) {
             return back()->with('error', 'Cannot delete a property with active inquiries (New or In Review).');

@@ -21,11 +21,14 @@ class InquiryController extends Controller
 
     public function index(Request $request): View
     {
-        $filters   = $request->only(['status', 'search']);
-        $inquiries = $this->inquiryService->getManagedInquiries(auth()->user(), $filters);
-        $statuses  = InquiryStatus::cases();
+        $filters       = $request->only(['status', 'search']);
+        $inquiries     = $this->inquiryService->getManagedInquiries(auth()->user(), $filters);
+        $statuses      = InquiryStatus::cases();
+        $statusCounts  = auth()->user()->hasRole('admin')
+            ? $this->inquiryService->getStats()['by_status']
+            : [];
 
-        return view('inquiries.index', compact('inquiries', 'filters', 'statuses'));
+        return view('inquiries.index', compact('inquiries', 'filters', 'statuses', 'statusCounts'));
     }
 
     public function store(StoreInquiryRequest $request): RedirectResponse

@@ -9,12 +9,12 @@
 
 @php
 $colors = [
-    'indigo' => 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400',
-    'green'  => 'bg-green-50 text-green-600 dark:bg-green-900/40 dark:text-green-400',
-    'blue'   => 'bg-blue-50 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400',
-    'amber'  => 'bg-amber-50 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400',
-    'red'    => 'bg-red-50 text-red-600 dark:bg-red-900/40 dark:text-red-400',
-    'purple' => 'bg-purple-50 text-purple-600 dark:bg-purple-900/40 dark:text-purple-400',
+    'indigo' => 'bg-indigo-50 text-indigo-600',
+    'green'  => 'bg-green-50 text-green-600',
+    'blue'   => 'bg-blue-50 text-blue-600',
+    'amber'  => 'bg-amber-50 text-amber-600',
+    'red'    => 'bg-red-50 text-red-600',
+    'purple' => 'bg-purple-50 text-purple-600',
 ];
 $iconColor = $colors[$color] ?? $colors['indigo'];
 
@@ -28,18 +28,18 @@ $icons = [
 $iconPath = $icons[$icon] ?? $icons['chart'];
 @endphp
 
-<div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-5
-     {{ $href ? 'hover:shadow-md transition-shadow cursor-pointer' : '' }}">
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5
+     {{ $href ? 'hover:shadow-md transition-shadow cursor-pointer hover:border-indigo-200' : '' }}">
     @if($href)<a href="{{ $href }}" class="block">@endif
 
     <div class="flex items-center justify-between">
         <div>
-            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">
                 {{ $label }}
             </p>
-            <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+            <p class="mt-2 text-3xl font-bold text-slate-900">
                 {{ number_format($value) }}
-                @if($suffix)<span class="text-lg font-normal text-gray-500 ml-1">{{ $suffix }}</span>@endif
+                @if($suffix)<span class="text-lg font-normal text-slate-400 ml-1">{{ $suffix }}</span>@endif
             </p>
         </div>
         <div class="w-12 h-12 rounded-xl flex items-center justify-center {{ $iconColor }}">

@@ -50,7 +50,7 @@ class PropertyRepository implements PropertyRepositoryInterface
     public function getForAgent(User $agent, int $perPage = 15): LengthAwarePaginator
     {
         return Property::query()
-            ->with(['images', 'inquiries'])
+            ->with('images')
             ->withCount('inquiries')
             ->where('user_id', $agent->id)
             ->latest()

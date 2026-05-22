@@ -17,7 +17,7 @@
     <div class="lg:col-span-2">
         <x-input-label for="description" value="Description *" />
         <textarea id="description" name="description" rows="5"
-                  class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                  class="mt-1 w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                   required>{{ old('description', $property->description ?? '') }}</textarea>
         <x-input-error :messages="$errors->get('description')" class="mt-1" />
     </div>
@@ -26,7 +26,7 @@
     <div>
         <x-input-label for="type" value="Property Type *" />
         <select id="type" name="type" required
-                class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                class="mt-1 w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
             @foreach($types as $type)
                 <option value="{{ $type->value }}"
                     {{ old('type', $property->type->value ?? '') === $type->value ? 'selected' : '' }}>
@@ -41,7 +41,7 @@
     <div>
         <x-input-label for="status" value="Status *" />
         <select id="status" name="status" required
-                class="mt-1 w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                class="mt-1 w-full rounded-md border-slate-300 bg-white text-slate-900 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
             @foreach($statuses as $status)
                 <option value="{{ $status->value }}"
                     {{ old('status', $property->status->value ?? '') === $status->value ? 'selected' : '' }}>
@@ -105,18 +105,18 @@
         <x-input-label for="featured_image" value="Featured Image" />
         <input id="featured_image" name="featured_image" type="file"
                accept="image/jpeg,image/png,image/webp"
-               class="mt-1 w-full text-sm text-gray-700 dark:text-gray-300
+               class="mt-1 w-full text-sm text-slate-700
                       file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
-                      file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700
-                      hover:file:bg-indigo-100 dark:file:bg-indigo-900 dark:file:text-indigo-300" />
-        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">JPG, PNG or WebP · max 5MB · auto-resized to 1200px</p>
+                      file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700
+                      hover:file:bg-indigo-100 cursor-pointer" />
+        <p class="mt-1 text-xs text-slate-400">JPG, PNG or WebP · max 5MB · auto-resized to 1200px</p>
         <x-input-error :messages="$errors->get('featured_image')" class="mt-1" />
 
         @if(isset($property) && $property->featured_image)
             <div class="mt-3">
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Current image:</p>
+                <p class="text-xs text-slate-400 mb-1.5">Current image:</p>
                 <img src="{{ asset('storage/' . $property->featured_image) }}"
-                     class="h-24 w-36 object-cover rounded-lg border border-gray-200 dark:border-gray-600" alt="Current" />
+                     class="h-24 w-36 object-cover rounded-lg border border-slate-200" alt="Current" />
             </div>
         @endif
     </div>

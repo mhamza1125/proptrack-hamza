@@ -12,42 +12,42 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+<body class="h-full font-sans antialiased bg-slate-50 text-slate-900">
 
     {{-- Navigation --}}
-    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-100 dark:border-gray-700 sticky top-0 z-50">
+    <nav class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 {{-- Logo --}}
-                <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <a href="{{ route('home') }}" class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                         </svg>
                     </div>
-                    <span class="text-xl font-bold text-indigo-600 dark:text-indigo-400">PropTrack</span>
+                    <span class="text-xl font-bold text-indigo-600 tracking-tight">PropTrack</span>
                 </a>
 
                 {{-- Right side --}}
                 <div class="flex items-center gap-3">
                     @auth
-                        <a href="{{ route('properties.index') }}"
-                           class="text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors">
-                            My Dashboard
+                        <a href="{{ route('dashboard') }}"
+                           class="text-sm text-slate-600 hover:text-indigo-600 font-medium transition-colors">
+                            Dashboard
                         </a>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+                            <button type="submit" class="text-sm text-slate-400 hover:text-slate-700 transition-colors">
                                 Log Out
                             </button>
                         </form>
                     @else
                         <a href="{{ route('login') }}"
-                           class="text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 font-medium transition-colors">
+                           class="text-sm text-slate-600 hover:text-indigo-600 font-medium transition-colors">
                             Log In
                         </a>
                         <a href="{{ route('register') }}"
-                           class="text-sm px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors">
+                           class="text-sm px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors shadow-sm">
                             Register
                         </a>
                     @endauth
@@ -59,14 +59,14 @@
     {{-- Flash Messages --}}
     @if(session('success'))
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-            <div class="bg-green-50 border border-green-200 text-green-800 rounded-lg px-4 py-3 text-sm">
+            <div class="bg-green-50 border border-green-200 text-green-800 rounded-lg px-4 py-3 text-sm font-medium">
                 {{ session('success') }}
             </div>
         </div>
     @endif
     @if(session('error'))
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-            <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg px-4 py-3 text-sm">
+            <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg px-4 py-3 text-sm font-medium">
                 {{ session('error') }}
             </div>
         </div>
@@ -78,7 +78,7 @@
     </main>
 
     {{-- Footer --}}
-    <footer class="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 mt-16">
+    <footer class="bg-white border-t border-slate-200 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-2">
@@ -87,9 +87,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                         </svg>
                     </div>
-                    <span class="font-semibold text-gray-700 dark:text-gray-300">PropTrack</span>
+                    <span class="font-semibold text-slate-700">PropTrack</span>
                 </div>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
+                <p class="text-sm text-slate-400">
                     &copy; {{ date('Y') }} PropTrack. All rights reserved.
                 </p>
             </div>
